@@ -48,6 +48,17 @@ root.mainloop()
 
 # disable the buttons once the person clicks the "GENERATE MUSIC" button
 
+# instrument functions
+mandolin = Mandolin()
+voice = FMVoices()
+sax = Saxophone()
+shaker = Shakers()
+sitar = Sitar()
+moog = MoogSynthesizer()
+struckbar = StruckBar()
+bowed = Bowed()
+blowhole = BlowHole()
+
 
 
 init()
