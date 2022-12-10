@@ -9,7 +9,6 @@ fast = None
 instruments = { "mandolin1": 0, 
                 "voice": 0, 
                 "saxophone": 0, 
-                "shaker": 0, 
                 "sitar": 0, 
                 "moog": 0,
                 "struckbar": 0,
@@ -69,9 +68,9 @@ def mtof(midi):
     a = 440 #frequency of A (coomon value is 440Hz)
     return (a / 32) * (2 ** ((midi - 9) / 12))
 
-# 2 octave C major scale
+# 1 octave C major scale
 # make this into a dictionary
-c_major_scale = [48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72]
+c_major_scale = [60, 62, 64, 65, 67, 69, 71, 72]
 
 # C3, C4, C5
 c_roots = [48, 60, 72]
@@ -109,53 +108,46 @@ def playSixteenth(instrument, midi_note, strength):
 def playHalf(instrument, midi_note, strength):
     play(instrument, midi_note, 2 * QUARTER_NOTE_DURATION, strength)
 
-
-# play(sax, 60, 10.0, 0.8)
-# make base beat 
-# pattern = []
-
-# play(sax, 20.0, 1.0)
-# beat is made up of 4 random instruments selected from the 
-# shaker choices - 0 to 22
-
 # 4 shaker preset numbers
 shakers = [None] * 4 
 for i in range(0, 4):
     preset_num = random.randint(0, 14)
-    print(preset_num)
     shakers[i] = preset_num
 
 pattern = []
 # 4 shakers + rest
 for i in range(0, 8):
     instr = random.randint(0, 4)
-    print(instr)
     if instr == 4:
         pattern.append("REST")
     else:
         pattern.append(shakers[instr])
 
-print(pattern)
 current_step = 0
 
-# loop this eventually 
+# loop this eventually and put that in another function
+# so that we can use that function as an argument for doTogether()
 
 def play_randomized_beat():
     for i in range(len(pattern)):
         if pattern[i] == "REST":
             wait(QUARTER_NOTE_DURATION)
         else:
-            print(pattern[i])
             shaker.preset(pattern[i])
             play(shaker, 60, QUARTER_NOTE_DURATION, 1.0)
 
-play_randomized_beat()
 
-# shaker.preset(16)
-# play(shaker, 60, QUARTER_NOTE_DURATION, 1.0)
-# shaker.preset(1)
-# play(shaker, 60, QUARTER_NOTE_DURATION, 1.0)
+# some logic to pick the instruments that the user wants
+musical_phrase = []
+for i in range(0, 12):
+    musical_phrase.append(random.randint(0, len(c_major_scale) - 1))
 
+def play_randomized_phrase():
+    for i in range(len(musical_phrase)):
+        print(c_major_scale[musical_phrase[i]])
+        play(sax, c_major_scale[musical_phrase[i]], QUARTER_NOTE_DURATION, 1.0)
+
+play_randomized_phrase()
 # first pick the four instruments and initialize them
 # then make a pattern of 8 or 16 beats based on 
 
