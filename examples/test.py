@@ -3,9 +3,10 @@ from tkinter import *
 import random
 
 QUARTER_NOTE_DURATION = 0.5
+SONG_DURATION = 12 * 4 * QUARTER_NOTE_DURATION
 
 root = Tk()
-fast = None
+fast = True
 instruments = { "mandolin": 0, 
                 "voice": 0, 
                 "saxophone": 0, 
@@ -17,12 +18,14 @@ instruments = { "mandolin": 0,
 
 # make functions for what to do when the buttons are pressed
 def clickFast():
-    false = True
-    print(false)
+    global fast
+    fast = True
+    print(fast)
 
 def clickSlow():
-    false = False
-    print(false)
+    global fast
+    fast = False
+    print(fast)
 
 def clickPrintInstruments():
     for instrument, val in instruments.items():
@@ -44,7 +47,7 @@ fast_button.pack()
 slow_button.pack()
 
 # debugging button to make sure the checkbox values are being taken
-print_instruments_button = Button(root, text="Print which instruments have been selected", command=clickPrintInstruments)
+print_instruments_button = Button(root, text="Pick three instruments, and a song speed, then click this button!", command=clickPrintInstruments)
 print_instruments_button.pack()
 
 
@@ -89,17 +92,25 @@ augmented = [0, 4, 8]
 
 chord_types = [major_third, minor_third, diminished, augmented]
 
+print(fast)
+if fast:
+    QUARTER_NOTE_DURATION = 0.5
+else:
+    print("IN HERE")
+    QUARTER_NOTE_DURATION = 1.0
+
+
+print(QUARTER_NOTE_DURATION)
+
 def play(instrument, midi_note, time, strength):
     instrument.connect()
     instrument.setFrequency(mtof(midi_note))
     if instrument is shaker or struckbar:
-        instrument.setGain(1.0)
-    elif instrument is mandolin or sax:
+        instrument.setGain(0.8)
+    elif instrument is mandolin or sax or blowhole:
         instrument.setGain(0.05)
-    elif instrument is voice or sitar or moog:
-        instrument.setGain(0.15)
-    elif instrument is bowed or blowhole:
-        instrument.setGain(0.1)
+    elif instrument is voice or sitar or moog or bowed:
+        instrument.setGain(0.05)
     instrument.noteOn(strength)
     wait(time)
     instrument.noteOff(1.0)
@@ -133,15 +144,15 @@ for i in range(0, 16):
 
 current_step = 0
 
-# loop this eventually and put that in another function
-# so that we can use that function as an argument for doTogether()
+# pattern is always 2 measures of 16 eighth notes
+# we need to loop pattern 6 times
 
 def play_randomized_beat():
-    for i in range(len(pattern)):
-        if pattern[i] == "REST":
+    for i in range(len(pattern * 3)):
+        if pattern[i % len(pattern)] == "REST":
             wait(QUARTER_NOTE_DURATION / 2)
         else:
-            shaker.preset(pattern[i])
+            shaker.preset(pattern[i % len(pattern)])
             play(shaker, 60, QUARTER_NOTE_DURATION / 2, 1.0)
 
 
@@ -153,33 +164,41 @@ for i in range(0, 12):
 def play_randomized_phrase(real_instrument):
     for i in range(len(musical_phrase)):
         print(c_major_scale[musical_phrase[i]])
-        play(real_instrument, c_major_scale[musical_phrase[i]], QUARTER_NOTE_DURATION, 1.0)
+        play(real_instrument, c_major_scale[musical_phrase[i]], QUARTER_NOTE_DURATION, 0.5)
 
 # first pick the four instruments and initialize them
 # then make a pattern of 8 or 16 beats based on 
 
 def play_mandolin():
+    check_and_wait("mandolin")
     play_randomized_phrase(mandolin)
 
 def play_voice():
+    check_and_wait("voice")
     play_randomized_phrase(voice)
 
 def play_saxophone():
+    check_and_wait("saxophone")
     play_randomized_phrase(sax)
 
 def play_sitar():
+    check_and_wait("sitar")
     play_randomized_phrase(sitar)
 
 def play_moog():
+    check_and_wait("moog")
     play_randomized_phrase(moog)
 
 def play_struckbar():
+    check_and_wait("struckbar")
     play_randomized_phrase(struckbar)
 
 def play_bowed():
+    check_and_wait("bowed")
     play_randomized_phrase(bowed)
 
 def play_blowhole():
+    check_and_wait("blowhole")
     play_randomized_phrase(blowhole)
 
 selected_instruments = []
@@ -189,6 +208,13 @@ for instrument, val in instruments.items():
 
 selected_instruments = selected_instruments[0:3]
 instrument_funcs = [None] * 3
+
+def check_and_wait(instr_str):
+    for i in range(len(selected_instruments)):
+        if selected_instruments[i] == instr_str and i == 1:
+            wait(4*QUARTER_NOTE_DURATION)
+        elif selected_instruments[i] == instr_str and i == 2:
+            wait(8*QUARTER_NOTE_DURATION)
 
 def pick_instrument():
     for i in range(len(selected_instruments)):
