@@ -6,7 +6,7 @@ QUARTER_NOTE_DURATION = 0.5
 
 root = Tk()
 fast = None
-instruments = { "mandolin1": 0, 
+instruments = { "mandolin": 0, 
                 "voice": 0, 
                 "saxophone": 0, 
                 "sitar": 0, 
@@ -143,11 +143,20 @@ for i in range(0, 12):
     musical_phrase.append(random.randint(0, len(c_major_scale) - 1))
 
 def play_randomized_phrase():
+    real_instrument = mandolin
     for i in range(len(musical_phrase)):
         print(c_major_scale[musical_phrase[i]])
-        play(sax, c_major_scale[musical_phrase[i]], QUARTER_NOTE_DURATION, 1.0)
+        play(real_instrument, c_major_scale[musical_phrase[i]], QUARTER_NOTE_DURATION, 1.0)
 
-play_randomized_phrase()
 # first pick the four instruments and initialize them
 # then make a pattern of 8 or 16 beats based on 
 
+selected_instruments = []
+for instrument, val in instruments.items():
+    if val.get() == 1:
+        selected_instruments.append(instrument)
+
+selected_instruments = selected_instruments[0:3]
+
+# play_randomized_phrase(selected_instruments[0])
+doTogether(play_randomized_phrase, play_randomized_beat)
