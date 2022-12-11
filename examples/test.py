@@ -105,12 +105,14 @@ print(QUARTER_NOTE_DURATION)
 def play(instrument, midi_note, time, strength):
     instrument.connect()
     instrument.setFrequency(mtof(midi_note))
-    if instrument is shaker or struckbar:
-        instrument.setGain(0.8)
-    elif instrument is mandolin or sax or blowhole:
-        instrument.setGain(0.05)
-    elif instrument is voice or sitar or moog or bowed:
-        instrument.setGain(0.05)
+    if instrument is shaker:
+        instrument.setGain(0.25)
+    elif instrument is mandolin or sax or blowhole or moog:
+        instrument.setGain(0.08)
+    elif instrument is voice:
+        instrument.setGain(0.15)
+    elif instrument is sitar or bowed or struckbar:
+        instrument.setGain(0.25)
     instrument.noteOn(strength)
     wait(time)
     instrument.noteOff(1.0)
